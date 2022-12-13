@@ -7,13 +7,200 @@
 
 import UIKit
 
-class ViewController: UIViewController {
 
+class ViewController: UIViewController , UITableViewDataSource , UITableViewDelegate {
+   
+    
+    @IBOutlet weak var table: UITableView!
+    
+    var fileUrl : URL!
+    
+    var markalar : [String] = []
+    var sayac : Int = 0
+    var selectedRow : Int = -1
+    var markaAciklamalari : [String] = []
+    
+    var markaAciklamasi : String = ""
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        
+        table.dataSource = self
+        table.delegate = self
+        
+        //self.title = "Markalar - 1"
+       //self.navigationController?.navigationBar.prefersLargeTitles = false
+        self.navigationItem.largeTitleDisplayMode = .always
+        let addButton  = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.add, target: self, action: #selector(addButtonClicked))
+        addButton.tintColor = UIColor.white
+        self.navigationItem.leftBarButtonItem = addButton
+        
+        // Edit Button
+        
+        let editButton = editButtonItem
+        editButton.tintColor = UIColor.white
+        self.navigationItem.leftBarButtonItems?.append(editButton)
+        
+        let baseURL = try! FileManager.default.url(for: FileManager.SearchPathDirectory.documentDirectory, in: FileManager.SearchPathDomainMask.userDomainMask, appropriateFor: nil, create: false)
+        
+        print(baseURL)
+        
+        fileUrl = baseURL.appendingPathComponent("Markalar.txt")
+       
+        
+        //user defaults ta verileri siler
+        //UserDefaults.standard.removeObject(forKey: "markalar")
+    
+        loadData()
+        
+        
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+     
+        if selectedRow == -1 {
+            return
+        }
+        if markaAciklamasi == "" {
+            markaAciklamalari.remove(at: selectedRow)
+            markalar.remove(at: selectedRow)
+        } else if markaAciklamasi == markaAciklamalari[selectedRow] {
+            return
+        } else {
+            markaAciklamalari[selectedRow] = markaAciklamasi
+        }
+        saveData()
+        table.reloadData()
+    }
+    
+    @objc func addButtonClicked(){
+        
+        if table.isEditing == true {
+            return
+        }
+        let alert = UIAlertController(title: "Marka Ekle", message: "Eklemek istediğiniz markayı giriniz", preferredStyle: UIAlertController.Style.alert)
+        alert.addTextField(configurationHandler: { txtMarkaAdi in
+            txtMarkaAdi.placeholder = "Marka Adi"
+        })
+        
+        let actionAdd = UIAlertAction(title: "Ekle", style: UIAlertAction.Style.default, handler: { action in
+            let firstTextField = alert.textFields![0] as UITextField
+            self.markaEkle(markaAdi: firstTextField.text!)
+        })
+        
+        let actionCancel = UIAlertAction(title: "İptal", style: UIAlertAction.Style.cancel, handler: nil)
+        
+        alert.addAction(actionAdd)
+        alert.addAction(actionCancel)
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    @IBAction func btnAddClicked(_ sender: Any) {
+        
+        if table.isEditing == true {
+            return
+        }
+        let alert = UIAlertController(title: "Marka Ekle", message: "Eklemek istediğiniz markayı giriniz", preferredStyle: UIAlertController.Style.alert)
+        alert.addTextField(configurationHandler: { txtMarkaAdi in
+            txtMarkaAdi.placeholder = "Marka Adi"
+        })
+        
+        let actionAdd = UIAlertAction(title: "Ekle", style: UIAlertAction.Style.default, handler: { action in
+            let firstTextField = alert.textFields![0] as UITextField
+            self.markaEkle(markaAdi: firstTextField.text!)
+        })
+        
+        let actionCancel = UIAlertAction(title: "İptal", style: UIAlertAction.Style.cancel, handler: nil)
+        
+        alert.addAction(actionAdd)
+        alert.addAction(actionCancel)
+        self.present(alert, animated: true, completion: nil)
+        
+        
+    }
+    
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return markalar.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        //let cell : UITableViewCell = UITableViewCell()
+        let cell : UITableViewCell = table.dequeueReusableCell(withIdentifier: "cell")!
+        cell.textLabel?.text = markalar[indexPath.row]
+        return cell
+    }
 
+    func markaEkle(markaAdi : String){
+        //let markaAdi : String = "\(sayac). Yeni Marka"
+        sayac = sayac + 1
+        //markalar.append(markaAdi)
+        //let indexPath : IndexPath = IndexPath(row: markalar.count - 1, section: 0)
+        markalar.insert(markaAdi, at: 0)
+        markaAciklamalari.insert("Girilmedi", at: 0)
+        let indexPath : IndexPath = IndexPath(row: 0, section: 0)
+        //tabloya ekleme
+        
+        table.insertRows(at: [indexPath], with: UITableView.RowAnimation.left)
+        saveData()
+        table.selectRow(at: indexPath, animated: true, scrollPosition: UITableView.ScrollPosition.none)
+        performSegue(withIdentifier: "goAciklamalar", sender: self)
+    }
+    
+    override func setEditing(_ editing: Bool, animated: Bool) {
+        super.setEditing(editing, animated: animated)
+        table.setEditing(editing, animated: animated)
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        
+        if editingStyle == .delete {
+            markalar.remove(at: indexPath.row)
+            markaAciklamalari.remove(at: indexPath.row)
+            table.deleteRows(at: [indexPath], with: UITableView.RowAnimation.left)
+            saveData()
+        }
+    }
+    
+    func saveData(){
+        UserDefaults.standard.set(markalar, forKey: "markalar")
+        UserDefaults.standard.set(markaAciklamalari, forKey: "aciklamalar")
+        let veriler = NSArray(array: markalar)
+        
+        do{
+            try veriler.write(to: fileUrl)
+        } catch {
+            print("Dosyaya yazarken hata geldi")
+        }
+    }
+    
+    func loadData(){
+       // if let loadedData : [String] = UserDefaults.standard.stringArray(forKey: "markalar") as? [String] {
+        if let loadedData : [String] = NSArray(contentsOf: fileUrl) as? [String]{
+            markalar = loadedData
+            
+        }
+        if let aciklamalar : [String] = UserDefaults.standard.value(forKey: "markalar") as? [String] {
+            markaAciklamalari = aciklamalar
+        }
+        table.reloadData()
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print("Seçilen Marka \(markalar[indexPath.row])")
+        
+        performSegue(withIdentifier: "goAciklamalar", sender: self)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+        let aciklamalarView : AciklamalarViewController = segue.destination as! AciklamalarViewController
+        selectedRow = table.indexPathForSelectedRow!.row
+        aciklamalarView.setAciklama(a: markaAciklamalari[selectedRow])
+        aciklamalarView.masterView = self
+    }
 }
 

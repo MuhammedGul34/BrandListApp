@@ -13,6 +13,7 @@
 		2EA3FD6D291C3EB100B59745 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2EA3FD6B291C3EB100B59745 /* Main.storyboard */; };
 		2EA3FD6F291C3EB200B59745 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2EA3FD6E291C3EB200B59745 /* Assets.xcassets */; };
 		2EA3FD72291C3EB200B59745 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2EA3FD70291C3EB200B59745 /* LaunchScreen.storyboard */; };
+		2EA3FD7A291D100F00B59745 /* AciklamalarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EA3FD79291D100F00B59745 /* AciklamalarViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		2EA3FD6E291C3EB200B59745 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2EA3FD71291C3EB200B59745 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2EA3FD73291C3EB200B59745 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2EA3FD79291D100F00B59745 /* AciklamalarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AciklamalarViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +61,7 @@
 				2EA3FD65291C3EB100B59745 /* AppDelegate.swift */,
 				2EA3FD67291C3EB100B59745 /* SceneDelegate.swift */,
 				2EA3FD69291C3EB100B59745 /* ViewController.swift */,
+				2EA3FD79291D100F00B59745 /* AciklamalarViewController.swift */,
 				2EA3FD6B291C3EB100B59745 /* Main.storyboard */,
 				2EA3FD6E291C3EB200B59745 /* Assets.xcassets */,
 				2EA3FD70291C3EB200B59745 /* LaunchScreen.storyboard */,
@@ -141,6 +144,7 @@
 				2EA3FD6A291C3EB100B59745 /* ViewController.swift in Sources */,
 				2EA3FD66291C3EB100B59745 /* AppDelegate.swift in Sources */,
 				2EA3FD68291C3EB100B59745 /* SceneDelegate.swift in Sources */,
+				2EA3FD7A291D100F00B59745 /* AciklamalarViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
